@@ -1,16 +1,57 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StartGameSctionControll : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("StartGameLobby")]
+    [SerializeField] GameObject manuStartGamePanal;
+    [SerializeField] Button playGameBtn;
+    [SerializeField] Button continueGameBtn;
+    [SerializeField] Button optionsBtn;
+    [SerializeField] Button exitGameBtn;
+    [Header("CutScenes")]
+    [SerializeField] GameObject cutscenesPanal;
+    [SerializeField] Button skipCutscenesBtn;
+
     void Start()
     {
+        playGameBtn.onClick.AddListener(OnClickPlayGame);
+        continueGameBtn.onClick.AddListener(OnClickContinueGame);
+        optionsBtn.onClick.AddListener(OnClickOptionsGame);
+        exitGameBtn.onClick.AddListener(OnClickExitGame);
+        skipCutscenesBtn.onClick.AddListener(OnClickskipCutscenes);
+    }
+    private void OnClickPlayGame()
+    {
+        OffAllPanal();
+        cutscenesPanal.SetActive(true);
+    }
+
+    private void OnClickContinueGame()
+    {
+
+    }
+
+    private void OnClickOptionsGame()
+    {
+
+    }
+
+    private void OnClickExitGame()
+    {
+
+    }
+
+    private void OnClickskipCutscenes()
+    {
+        OffAllPanal();
         
     }
 
-    // Update is called once per frame
-    void Update()
+    void OffAllPanal()
     {
-        
+        manuStartGamePanal.SetActive(false);
+        cutscenesPanal.SetActive(false);
     }
 }
