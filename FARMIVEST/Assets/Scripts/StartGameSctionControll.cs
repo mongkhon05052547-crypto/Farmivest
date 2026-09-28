@@ -26,6 +26,7 @@ public class StartGameSctionControll : MonoBehaviour
     {
         OffAllPanal();
         cutscenesPanal.SetActive(true);
+        GameManager.Instance.ReturnToMainCam();
     }
 
     private void OnClickContinueGame()
@@ -46,12 +47,15 @@ public class StartGameSctionControll : MonoBehaviour
     private void OnClickskipCutscenes()
     {
         OffAllPanal();
-        
+        GameManager.Instance.plantDataControllerUi.AddSeed(SeedTier.Tier1);
+        GameManager.Instance.plantDataControllerUi.AddSeed(SeedTier.Tier1);
+        GameManager.Instance.plantDataControllerUi.AddSeed(SeedTier.Tier1);
     }
 
     void OffAllPanal()
     {
         manuStartGamePanal.SetActive(false);
         cutscenesPanal.SetActive(false);
+
     }
 }

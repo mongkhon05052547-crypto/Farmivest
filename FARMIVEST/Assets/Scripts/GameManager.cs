@@ -5,11 +5,19 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    public PlantDataControllerUi plantDataControllerUi;
+
     [Header("CinemachineCamera")]
     [SerializeField] CinemachineCamera vcamMain;
     [SerializeField] CinemachineCamera vcamZoom;
     [Header("UiZone")]
-    [SerializeField] GameObject dataInPlot;
+    public GameObject mainGamePlayUiPanal;
+    [SerializeField] GameObject dataInPlotPanal;
+    [Header("PlotAndSeed")]
+    public Sprite[] seedLV123List;
+    public Sprite[] plantLV123List;
+    public PlotController currentPlotSelect;
     void Awake()
     {
         if (Instance == null)
@@ -22,17 +30,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-
-    }
-
     public void ReturnToMainCam()
     {
         OffAllCam();
         vcamMain.gameObject.SetActive(true);
-
-        dataInPlot.SetActive(false);
+        currentPlotSelect = null;
+        dataInPlotPanal.SetActive(false);
+        mainGamePlayUiPanal.SetActive(true);
     }
 
     public void ZoomToPlot(GameObject _targetZoom)
@@ -40,6 +44,7 @@ public class GameManager : MonoBehaviour
         OffAllCam();
         vcamZoom.gameObject.SetActive(true);
         vcamZoom.Target.TrackingTarget = _targetZoom.transform;
+        mainGamePlayUiPanal.SetActive(false);
 
         StartCoroutine(DelayOpenUiDataInPlot());
     }
@@ -47,7 +52,7 @@ public class GameManager : MonoBehaviour
     IEnumerator DelayOpenUiDataInPlot()
     {
         yield return new WaitForSeconds(0.7f);
-        dataInPlot.SetActive(true);
+        dataInPlotPanal.SetActive(true);
     }
 
     void OffAllCam()
