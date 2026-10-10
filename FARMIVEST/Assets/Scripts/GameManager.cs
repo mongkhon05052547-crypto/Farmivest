@@ -2,6 +2,11 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 
+public enum ImprintQusets
+{
+    LifeWater,Music
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;

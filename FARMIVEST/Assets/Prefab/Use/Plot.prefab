@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlotController
   havePlant: 0
-  plantShow: {fileID: 0}
+  plantShow: {fileID: 7219907572443549491}
 --- !u!60 &2508756911878764524
 PolygonCollider2D:
   m_ObjectHideFlags: 0

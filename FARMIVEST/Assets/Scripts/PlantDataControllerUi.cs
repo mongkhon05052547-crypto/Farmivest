@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public enum SeedTier
@@ -11,6 +12,15 @@ public class PlantDataControllerUi : MonoBehaviour
     [SerializeField] GameObject debuffPanal;
     [Header("PlantData")]
     [SerializeField] GameObject plantDataPanal;
+    [SerializeField] TMP_Text tierAndStateText;
+    [SerializeField] TMP_Text hpText;
+    [SerializeField] TMP_Text expText;
+    [SerializeField] TMP_Text descriptionText;
+    [SerializeField] TMP_Text imprintPointText;
+    [SerializeField] TMP_Text imprintQuest1Text;
+    [SerializeField] TMP_Text imprintQuest2Text;
+    [SerializeField] TMP_Text imprintQuest3Text;
+
     [Header("SeedSelect")]
     [SerializeField] GameObject seedSelectPanal;
     [SerializeField] int[] haveSeedLv;
@@ -32,11 +42,7 @@ public class PlantDataControllerUi : MonoBehaviour
         noSelectSeedBtn.onClick.AddListener(() => { checkPlantSeedPanal.SetActive(false); });
     }
 
-    public void PlantSeed(int _seedIndex)
-    {
-        checkPlantSeedPanal.SetActive(true);
-        nowSeedLvSelect = haveSeedLv[_seedIndex];
-    }
+
 
     void ResetAllPanal()
     {
@@ -44,18 +50,18 @@ public class PlantDataControllerUi : MonoBehaviour
         seedSelectPanal.SetActive(false);
     }
 
-    public void OpenPlantDataPanal()
-    {
-        ResetAllPanal();
-        plantDataPanal.SetActive(true);
-    }
-
+    #region PlantSeed
     public void OpenSeedSelectPanalPanal()
     {
         ResetAllPanal();
         seedSelectPanal.SetActive(true);
     }
 
+    public void PlantSeed(int _seedIndex)
+    {
+        checkPlantSeedPanal.SetActive(true);
+        nowSeedLvSelect = haveSeedLv[_seedIndex];
+    }
     void PlantSeedToPlot()
     {
         ResetAllPanal();
@@ -64,7 +70,9 @@ public class PlantDataControllerUi : MonoBehaviour
         RemoveSeed();
         OpenPlantDataPanal();
     }
+    #endregion
 
+    #region Add And Remove Seed
     public void AddSeed(SeedTier _seedTier)
     {
         for (int i = 0; i < haveSeedLv.Length; i++)
@@ -91,5 +99,68 @@ public class PlantDataControllerUi : MonoBehaviour
             }
         }
     }
+    #endregion
+
+    #region DataPlant in Plot
+    public void OpenPlantDataPanal()
+    {
+        ResetAllPanal();
+        plantDataPanal.SetActive(true);
+        UpdateAllPlantDataText();
+    }
+
+    // ฟังก์ชันอัปเดตข้อความทั้งหมด
+    public void UpdateAllPlantDataText()
+    {
+        UpdateTierAndStateTextValue();
+        UpdateHpTextValue();
+        UpdateExpTextValue();
+        UpdateDescriptionTextValue();
+        UpdateImprintPointTextValue();
+        UpdateImprintQuest1TextValue();
+        UpdateImprintQuest2TextValue();
+        UpdateImprintQuest3TextValue();
+    }
+
+    void UpdateTierAndStateTextValue()
+    {
+        tierAndStateText.text = $"Tier : {GameManager.Instance.currentPlotSelect.tier} | State : {GameManager.Instance.currentPlotSelect.state}";
+    }
+
+    void UpdateHpTextValue()
+    {
+        hpText.text = "HP : 100 / 100";
+    }
+
+    void UpdateExpTextValue()
+    {
+        expText.text = "Exp : 0 / 15";
+    }
+
+    void UpdateDescriptionTextValue()
+    {
+        descriptionText.text = "คำอธิบายพืช...";
+    }
+
+    void UpdateImprintPointTextValue()
+    {
+        imprintPointText.text = "Imprint : 0 / 100";
+    }
+
+    void UpdateImprintQuest1TextValue()
+    {
+        imprintQuest1Text.text = "เควสที่ 1 : รดน้ำ";
+    }
+
+    void UpdateImprintQuest2TextValue()
+    {
+        imprintQuest2Text.text = "เควสที่ 2 : ใส่ปุ๋ย";
+    }
+
+    void UpdateImprintQuest3TextValue()
+    {
+        imprintQuest3Text.text = "เควสที่ 3 : กำจัดวัชพืช";
+    }
+    #endregion
 }
 
