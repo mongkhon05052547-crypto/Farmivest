@@ -17,10 +17,12 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
     [SerializeField] public int maxExp;
     [SerializeField] public int imprintPoint;
     [SerializeField] public ImprintQusets[] imprintQusets = new ImprintQusets[3];
+    [SerializeField] public bool[] canDoimprintQusets = new bool[3];
     public bool canShowStatus = false;
     void Awake()
     {
         imprintQusets = new ImprintQusets[3];
+        canDoimprintQusets = new bool[3];
     }
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -45,12 +47,6 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
         UpdateMaxExp();
         int _rndPlantIndex = Random.Range(0, GameManager.Instance.plantDataCtr.allPlantDatas.Length);
         plantData = GameManager.Instance.plantDataCtr.allPlantDatas[_rndPlantIndex];
-
-        // สุ่มเควส Imprint แต่ละช่องตามจำนวนใน enum ImprintQusets
-        for (int i = 0; i < _seedTier; i++)
-        {
-            imprintQusets[i] = (ImprintQusets)Random.Range(1, System.Enum.GetValues(typeof(ImprintQusets)).Length);
-        }
         GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
     }
 
@@ -60,22 +56,26 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
         currentHp = maxHp;
         currentExp = 0;
         maxExp = 100 * state * tier;
-
     }
 
     public void ModifyExp(int _input)
     {
+        if (!havePlant) return;
         if (state == 4 && currentExp == maxExp)
         {
             GameManager.Instance.WarningTextShow("MaxLv : Can Havest");
             return;
         }
+        GameManager.Instance.toolsCtr.amountLifeWater--;
         currentExp += _input;
         currentExp = Mathf.Clamp(currentExp, 0, maxExp);
-        if (currentExp == maxExp)
+        GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+
+        if (currentExp == maxExp && state != 4)
         {
             state++;
             UpdateMaxExp();
+            RndImprintQusets();
             if (state < 4)
             {
                 plantShow.sprite = GameManager.Instance.plantLV123List[state - 1];
@@ -86,6 +86,42 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
                 canShowStatus = true;
             }
         }
+
         GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+    }
+
+    void RndImprintQusets()
+    {
+        for (int a = 0; a < canDoimprintQusets.Length; a++)
+        {
+            canDoimprintQusets[a] = false;
+        }
+        GameManager.Instance.plantDataCtr.lineOffImprintQuest1.SetActive(false);
+        GameManager.Instance.plantDataCtr.lineOffImprintQuest2.SetActive(false);
+        GameManager.Instance.plantDataCtr.lineOffImprintQuest3.SetActive(false);
+        // สุ่มเควส Imprint แต่ละช่องตามจำนวนใน enum ImprintQusets
+        for (int i = 0; i < state - 1; i++)
+        {
+            imprintQusets[i] = (ImprintQusets)Random.Range(1, System.Enum.GetValues(typeof(ImprintQusets)).Length);
+            canDoimprintQusets[i] = true;
+        }
+    }
+
+    public void CheckImprintQusetsCanDo(ImprintQusets _input)
+    {
+        for (int i = 0; i < imprintQusets.Length; i++)
+        {
+            if (imprintQusets[i] == _input && canDoimprintQusets[i] == true)
+            {
+                canDoimprintQusets[i] = false;
+                GameManager.Instance.plantDataCtr.lineOffImprintQuest1.SetActive(!canDoimprintQusets[0]);
+                GameManager.Instance.plantDataCtr.lineOffImprintQuest2.SetActive(!canDoimprintQusets[1]);
+                GameManager.Instance.plantDataCtr.lineOffImprintQuest3.SetActive(!canDoimprintQusets[2]);
+                imprintPoint += 10;
+                imprintPoint = Mathf.Clamp(imprintPoint, 0, 100);
+                GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+                return;
+            }
+        }
     }
 }

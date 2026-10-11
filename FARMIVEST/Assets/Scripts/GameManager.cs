@@ -5,7 +5,7 @@ using UnityEngine;
 
 public enum ImprintQusets
 {
-    None, LifeWater, Music
+    None, LifeWater, KillBug, AntiPoison, PlayMusic, AntiReverse, HpPotion
 }
 
 public class GameManager : MonoBehaviour
@@ -24,9 +24,10 @@ public class GameManager : MonoBehaviour
     [Header("PlotAndSeed")]
     public Sprite[] seedLV123List;
     public Sprite[] plantLV123List;
-    public PlotController currentPlotSelect;
+    [HideInInspector] public PlotController currentPlotSelect;
 
     [Header("Warning")]
+    Coroutine coWaring;
     [SerializeField] GameObject warningObj;
     [SerializeField] TMP_Text warningText;
 
@@ -76,7 +77,11 @@ public class GameManager : MonoBehaviour
 
     public void WarningTextShow(string _input)
     {
-        StartCoroutine(CallWarningTextShow(_input));
+        if (coWaring != null)
+        {
+            StopCoroutine(coWaring);
+        }
+        coWaring = StartCoroutine(CallWarningTextShow(_input));
     }
     public IEnumerator CallWarningTextShow(string _input)
     {
@@ -84,5 +89,6 @@ public class GameManager : MonoBehaviour
         warningText.text = _input;
         yield return new WaitForSeconds(3f);
         warningObj.SetActive(false);
+        coWaring = null;
     }
 }

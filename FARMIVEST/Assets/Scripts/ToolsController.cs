@@ -4,12 +4,19 @@ using UnityEngine.UI;
 public class ToolsController : MonoBehaviour
 {
     public Button lifeWaterBtn;
+    public int amountLifeWater;
     public Button killBugBtn;
+    public int amountKillBug;
     public Button antiPoisonBtn;
+    public int amountAntiPoison;
     public Button musicBtn;
+    public int amountMusic;
     public Button antiReverseBtn;
+    public int amountAntiReverse;
     public Button glassShowBtn;
+    public int amountGlassShow;
     public Button hpPotionShowBtn;
+    public int amountHpPotion;
 
     void Awake()
     {
@@ -25,42 +32,83 @@ public class ToolsController : MonoBehaviour
     // 1. น้ำวิเศษ (เพิ่ม EXP)
     void AddExp()
     {
+        if (amountLifeWater == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have LifeWater");
+            return;
+        }
+        GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.LifeWater);
         GameManager.Instance.currentPlotSelect.ModifyExp(35);
     }
 
     // 2. ยาฆ่าแมลง
     void KillBug()
     {
-
+        if (amountKillBug == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have KillBug");
+            return;
+        }
+        amountKillBug--;
+        GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.KillBug);
     }
 
     // 3. ยาแก้พิษ
     void AntiPoison()
     {
-
+        if (amountAntiPoison == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have AntiPoison");
+            return;
+        }
+        amountAntiPoison--;
+        GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.AntiPoison);
     }
 
     // 4. เปิดเพลง (ทำเควส Imprint)
     void PlayMusic()
     {
-
+        if (amountMusic == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have Music");
+            return;
+        }
+        amountMusic--;
+        GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.PlayMusic);
     }
 
     // 5. ยาแก้การถดถอย
     void AntiReverse()
     {
-
+        if (amountAntiReverse == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have AntiReverse");
+            return;
+        }
+        amountAntiReverse--;
+        GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.AntiReverse);
     }
 
     // 6. แว่นขยาย (ส่องสเตตัสพืช)
     void GlassShow()
     {
-
+        if (amountGlassShow == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have GlassShow");
+            return;
+        }
+        amountGlassShow--;
     }
 
     // 7. ยาเพิ่มเลือด/ฟื้นฟู HP
     void HpPotion()
     {
-
+        if (amountHpPotion == 0)
+        {
+            GameManager.Instance.WarningTextShow("Not Have HpPotion");
+            return;
+        }
+        amountHpPotion--;
+        GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.HpPotion);
     }
 }

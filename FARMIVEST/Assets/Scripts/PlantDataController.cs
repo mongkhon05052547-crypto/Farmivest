@@ -20,8 +20,11 @@ public class PlantDataController : MonoBehaviour
     [SerializeField] TMP_Text descriptionText;
     [SerializeField] TMP_Text imprintPointText;
     [SerializeField] TMP_Text imprintQuest1Text;
+    [SerializeField] public GameObject lineOffImprintQuest1;
     [SerializeField] TMP_Text imprintQuest2Text;
+    [SerializeField] public GameObject lineOffImprintQuest2;
     [SerializeField] TMP_Text imprintQuest3Text;
+    [SerializeField] public GameObject lineOffImprintQuest3;
 
     [Header("SeedSelect")]
     [SerializeField] GameObject seedSelectPanal;
@@ -158,7 +161,7 @@ public class PlantDataController : MonoBehaviour
             descriptionText.text = "???";
             return;
         }
-        descriptionText.text = "Plant {GameManager.Instance.currentPlotSelect.plantData.name} YumYum...";
+        descriptionText.text = $"Plant {GameManager.Instance.currentPlotSelect.plantData.namePlant} YumYum...";
     }
 
     void UpdateImprintPointTextValue()
