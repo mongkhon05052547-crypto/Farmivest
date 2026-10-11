@@ -1,17 +1,19 @@
 using System.Collections;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 
 public enum ImprintQusets
 {
-    LifeWater,Music
+    None, LifeWater, Music
 }
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public PlantDataControllerUi plantDataControllerUi;
+    public PlantDataController plantDataCtr;
+    public ToolsController toolsCtr;
 
     [Header("CinemachineCamera")]
     [SerializeField] CinemachineCamera vcamMain;
@@ -23,6 +25,12 @@ public class GameManager : MonoBehaviour
     public Sprite[] seedLV123List;
     public Sprite[] plantLV123List;
     public PlotController currentPlotSelect;
+
+    [Header("Warning")]
+    [SerializeField] GameObject warningObj;
+    [SerializeField] TMP_Text warningText;
+
+
     void Awake()
     {
         if (Instance == null)
@@ -64,5 +72,17 @@ public class GameManager : MonoBehaviour
     {
         vcamMain.gameObject.SetActive(false);
         vcamZoom.gameObject.SetActive(false);
+    }
+
+    public void WarningTextShow(string _input)
+    {
+        StartCoroutine(CallWarningTextShow(_input));
+    }
+    public IEnumerator CallWarningTextShow(string _input)
+    {
+        warningObj.SetActive(true);
+        warningText.text = _input;
+        yield return new WaitForSeconds(3f);
+        warningObj.SetActive(false);
     }
 }

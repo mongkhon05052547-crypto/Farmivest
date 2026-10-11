@@ -47,9 +47,9 @@ public class StartGameSctionControll : MonoBehaviour
     private void OnClickskipCutscenes()
     {
         OffAllPanal();
-        GameManager.Instance.plantDataControllerUi.AddSeed(SeedTier.Tier1);
-        GameManager.Instance.plantDataControllerUi.AddSeed(SeedTier.Tier1);
-        GameManager.Instance.plantDataControllerUi.AddSeed(SeedTier.Tier1);
+        GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
+        GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
+        GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
     }
 
     void OffAllPanal()

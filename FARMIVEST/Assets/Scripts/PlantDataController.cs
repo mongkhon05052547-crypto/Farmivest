@@ -1,17 +1,19 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 public enum SeedTier
 {
     Tier1 = 0, Tier2 = 1, Tier3 = 2,
 }
 
-public class PlantDataControllerUi : MonoBehaviour
+public class PlantDataController : MonoBehaviour
 {
     [Header("Debuff")]
     [SerializeField] GameObject debuffPanal;
     [Header("PlantData")]
     [SerializeField] GameObject plantDataPanal;
+    [SerializeField] TMP_Text namePlantText;
     [SerializeField] TMP_Text tierAndStateText;
     [SerializeField] TMP_Text hpText;
     [SerializeField] TMP_Text expText;
@@ -23,14 +25,16 @@ public class PlantDataControllerUi : MonoBehaviour
 
     [Header("SeedSelect")]
     [SerializeField] GameObject seedSelectPanal;
-    [SerializeField] int[] haveSeedLv;
-    [SerializeField] Button[] seedListBtn;
-    [SerializeField] Image[] seedIconList;
+    [SerializeField] int[] haveSeedTier = new int[15];
+    [SerializeField] Button[] seedListBtn = new Button[15];
+    [SerializeField] Image[] seedIconList = new Image[15];
     [SerializeField] GameObject checkPlantSeedPanal;
     [SerializeField] Button yesSelectSeedBtn;
     [SerializeField] Button noSelectSeedBtn;
     [Space]
-    [SerializeField] int nowSeedLvSelect;
+    [SerializeField] int nowSeedTierSelect;
+    [Header("AllPlantData")]
+    [SerializeField] public PlantData[] allPlantDatas;
     void Awake()
     {
         for (int i = 0; i < seedListBtn.Length; i++)
@@ -41,8 +45,6 @@ public class PlantDataControllerUi : MonoBehaviour
         yesSelectSeedBtn.onClick.AddListener(PlantSeedToPlot);
         noSelectSeedBtn.onClick.AddListener(() => { checkPlantSeedPanal.SetActive(false); });
     }
-
-
 
     void ResetAllPanal()
     {
@@ -60,13 +62,14 @@ public class PlantDataControllerUi : MonoBehaviour
     public void PlantSeed(int _seedIndex)
     {
         checkPlantSeedPanal.SetActive(true);
-        nowSeedLvSelect = haveSeedLv[_seedIndex];
+        nowSeedTierSelect = haveSeedTier[_seedIndex];
     }
+
     void PlantSeedToPlot()
     {
         ResetAllPanal();
         checkPlantSeedPanal.SetActive(false);
-        GameManager.Instance.currentPlotSelect.PlantSeed(nowSeedLvSelect);
+        GameManager.Instance.currentPlotSelect.PlantSeed(nowSeedTierSelect);
         RemoveSeed();
         OpenPlantDataPanal();
     }
@@ -75,25 +78,26 @@ public class PlantDataControllerUi : MonoBehaviour
     #region Add And Remove Seed
     public void AddSeed(SeedTier _seedTier)
     {
-        for (int i = 0; i < haveSeedLv.Length; i++)
+        for (int i = 0; i < haveSeedTier.Length; i++)
         {
-            if (haveSeedLv[i] == 0)
+            if (haveSeedTier[i] == 0)
             {
-                haveSeedLv[i] = (int)_seedTier + 1;
+                haveSeedTier[i] = (int)_seedTier + 1;
                 seedListBtn[i].gameObject.SetActive(true);
                 seedIconList[i].sprite = GameManager.Instance.seedLV123List[(int)_seedTier];
                 return;
             }
         }
     }
+
     public void RemoveSeed()
     {
-        for (int i = 0; i < haveSeedLv.Length; i++)
+        for (int i = 0; i < haveSeedTier.Length; i++)
         {
-            if (haveSeedLv[i] == nowSeedLvSelect)
+            if (haveSeedTier[i] == nowSeedTierSelect)
             {
                 seedListBtn[i].gameObject.SetActive(false);
-                haveSeedLv[i] = 0;
+                haveSeedTier[i] = 0;
                 seedIconList[i].sprite = GameManager.Instance.seedLV123List[0];
                 return;
             }
@@ -109,9 +113,10 @@ public class PlantDataControllerUi : MonoBehaviour
         UpdateAllPlantDataText();
     }
 
-    // ฟังก์ชันอัปเดตข้อความทั้งหมด
+    // ฟังก์ชันสั่งอัปเดตข้อมูลทั้งหมด
     public void UpdateAllPlantDataText()
     {
+        UpdateNamePlantTextValue();
         UpdateTierAndStateTextValue();
         UpdateHpTextValue();
         UpdateExpTextValue();
@@ -122,6 +127,15 @@ public class PlantDataControllerUi : MonoBehaviour
         UpdateImprintQuest3TextValue();
     }
 
+    void UpdateNamePlantTextValue()
+    {
+        if (!GameManager.Instance.currentPlotSelect.canShowStatus)
+        {
+            namePlantText.text = "???";
+            return;
+        }
+        namePlantText.text = $"{GameManager.Instance.currentPlotSelect.plantData.name}";
+    }
     void UpdateTierAndStateTextValue()
     {
         tierAndStateText.text = $"Tier : {GameManager.Instance.currentPlotSelect.tier} | State : {GameManager.Instance.currentPlotSelect.state}";
@@ -129,38 +143,60 @@ public class PlantDataControllerUi : MonoBehaviour
 
     void UpdateHpTextValue()
     {
-        hpText.text = "HP : 100 / 100";
+        hpText.text = $"HP : {GameManager.Instance.currentPlotSelect.currentHp} / {GameManager.Instance.currentPlotSelect.maxHp}";
     }
 
     void UpdateExpTextValue()
     {
-        expText.text = "Exp : 0 / 15";
+        expText.text = $"Exp : {GameManager.Instance.currentPlotSelect.currentExp} / {GameManager.Instance.currentPlotSelect.maxExp}";
     }
 
     void UpdateDescriptionTextValue()
     {
-        descriptionText.text = "คำอธิบายพืช...";
+        if (!GameManager.Instance.currentPlotSelect.canShowStatus)
+        {
+            descriptionText.text = "???";
+            return;
+        }
+        descriptionText.text = "Plant {GameManager.Instance.currentPlotSelect.plantData.name} YumYum...";
     }
 
     void UpdateImprintPointTextValue()
     {
-        imprintPointText.text = "Imprint : 0 / 100";
+        imprintPointText.text = $"Imprint : {GameManager.Instance.currentPlotSelect.imprintPoint} / 100";
     }
 
     void UpdateImprintQuest1TextValue()
     {
-        imprintQuest1Text.text = "เควสที่ 1 : รดน้ำ";
+        if (GameManager.Instance.currentPlotSelect.imprintQusets[0] == ImprintQusets.None)
+        {
+            imprintQuest1Text.gameObject.SetActive(false);
+            return;
+        }
+        imprintQuest1Text.gameObject.SetActive(true);
+        imprintQuest1Text.text = $"{GameManager.Instance.currentPlotSelect.imprintQusets[0]} + 10p";
     }
 
     void UpdateImprintQuest2TextValue()
     {
-        imprintQuest2Text.text = "เควสที่ 2 : ใส่ปุ๋ย";
+        if (GameManager.Instance.currentPlotSelect.imprintQusets[1] == ImprintQusets.None)
+        {
+            imprintQuest2Text.gameObject.SetActive(false);
+            return;
+        }
+        imprintQuest2Text.gameObject.SetActive(true);
+        imprintQuest2Text.text = $"{GameManager.Instance.currentPlotSelect.imprintQusets[1]}  + 10p";
     }
 
     void UpdateImprintQuest3TextValue()
     {
-        imprintQuest3Text.text = "เควสที่ 3 : กำจัดวัชพืช";
+        if (GameManager.Instance.currentPlotSelect.imprintQusets[2] == ImprintQusets.None)
+        {
+            imprintQuest3Text.gameObject.SetActive(false);
+            return;
+        }
+        imprintQuest3Text.gameObject.SetActive(true);
+        imprintQuest3Text.text = $"{GameManager.Instance.currentPlotSelect.imprintQusets[2]}  + 10p";
     }
     #endregion
 }
-
