@@ -8,5 +8,6 @@ public class CutScenesCallFun : MonoBehaviour
         GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
         GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
         GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
+        GameManager.Instance.toolsCtr.AddLifeWater(3);
     }
 }

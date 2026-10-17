@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 public class PlotController : MonoBehaviour, IPointerDownHandler
 {
-    [SerializeField] bool havePlant;
+    [SerializeField] public bool havePlant;
     [Header("Plant")]
     [Space]
     [SerializeField] SpriteRenderer plantShow;
@@ -26,6 +26,7 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (!GameManager.Instance.canPlant) return;
         GameManager.Instance.currentPlotSelect = this;
         GameManager.Instance.ZoomToPlot(gameObject);
         if (havePlant == true)
@@ -122,6 +123,17 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
                 GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
                 return;
             }
+        }
+    }
+
+
+    public void TakeDamage(int _damage)
+    {
+        currentHp -= _damage;
+        if (currentHp <= 0)
+        {
+            havePlant = false;
+            plantShow.sprite = null;
         }
     }
 }

@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     public PlantDataController plantDataCtr;
     public ToolsController toolsCtr;
+    public HouseController houseCtr;
 
     [Header("CinemachineCamera")]
     [SerializeField] CinemachineCamera vcamMain;
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     [Header("PlotAndSeed")]
     public Sprite[] seedLV123List;
     public Sprite[] plantLV123List;
+    public PlotController[] allPlot;
     [HideInInspector] public PlotController currentPlotSelect;
 
     [Header("Warning")]
@@ -31,7 +33,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject warningObj;
     [SerializeField] TMP_Text warningText;
 
-
+    public bool canPlant;
     void Awake()
     {
         if (Instance == null)
@@ -42,6 +44,13 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        canPlant = true;
+    }
+
+    [ContextMenu("Get All Plots")]
+    void GetAllPlots()
+    {
+        allPlot = FindObjectsByType<PlotController>(FindObjectsSortMode.None);
     }
 
     public void ReturnToMainCam()

@@ -47,6 +47,12 @@ TagManager:
   - name: Plant
     uniqueID: 836320129
     locked: 0
+  - name: Enemy
+    uniqueID: 4095468193
+    locked: 0
+  - name: Effect
+    uniqueID: 2735038377
+    locked: 0
   - name: Ui
     uniqueID: 3048026383
     locked: 0
