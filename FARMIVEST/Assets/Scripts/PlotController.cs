@@ -19,6 +19,8 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
     [SerializeField] public ImprintQusets[] imprintQusets = new ImprintQusets[3];
     [SerializeField] public bool[] canDoimprintQusets = new bool[3];
     public bool canShowStatus = false;
+    [Header("Effect")]
+    [SerializeField] public Animator useLifeWaterEffect;
     void Awake()
     {
         imprintQusets = new ImprintQusets[3];
@@ -48,7 +50,10 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
         UpdateMaxExp();
         int _rndPlantIndex = Random.Range(0, GameManager.Instance.plantDataCtr.allPlantDatas.Length);
         plantData = GameManager.Instance.plantDataCtr.allPlantDatas[_rndPlantIndex];
-        GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        if (GameManager.Instance.currentPlotSelect == this)
+        {
+            GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        }
     }
 
     void UpdateMaxExp()
@@ -64,13 +69,19 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
         if (!havePlant) return;
         if (state == 4 && currentExp == maxExp)
         {
-            GameManager.Instance.WarningTextShow("MaxLv : Can Havest");
+            if (GameManager.Instance.currentPlotSelect == this)
+            {
+                GameManager.Instance.WarningTextShow("MaxLv : Can Havest");
+            }
             return;
         }
-        GameManager.Instance.toolsCtr.amountLifeWater--;
+        // ToolsController handles amountLifeWater decrement
         currentExp += _input;
         currentExp = Mathf.Clamp(currentExp, 0, maxExp);
-        GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        if (GameManager.Instance.currentPlotSelect == this)
+        {
+            GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        }
 
         if (currentExp == maxExp && state != 4)
         {
@@ -88,7 +99,10 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
             }
         }
 
-        GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        if (GameManager.Instance.currentPlotSelect == this)
+        {
+            GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        }
     }
 
     void RndImprintQusets()
@@ -120,7 +134,10 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
                 GameManager.Instance.plantDataCtr.lineOffImprintQuest3.SetActive(!canDoimprintQusets[2]);
                 imprintPoint += 10;
                 imprintPoint = Mathf.Clamp(imprintPoint, 0, 100);
-                GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+                if (GameManager.Instance.currentPlotSelect == this)
+        {
+            GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+        }
                 return;
             }
         }

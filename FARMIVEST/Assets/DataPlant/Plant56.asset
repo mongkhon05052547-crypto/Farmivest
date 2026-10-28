@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ee93dacd86918d549a8148b4e6187445, type: 3}
-  m_Name: Peaper
+  m_Name: Plant56
   m_EditorClassIdentifier: Assembly-CSharp::PlantData
-  namePlant: Peaper
-  icon: {fileID: 21300000, guid: 9dc7d3ec4f7712143bce9d70b2a27650, type: 3}
+  namePlant: Plant56
+  icon: {fileID: 21300000, guid: 2cc91b53cf8e358418729f192abb1b4c, type: 3}
   Description: 

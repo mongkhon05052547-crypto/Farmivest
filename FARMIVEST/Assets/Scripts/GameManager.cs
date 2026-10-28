@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public PlantDataController plantDataCtr;
     public ToolsController toolsCtr;
     public HouseController houseCtr;
+    public ShopController shopCtr;
 
     [Header("CinemachineCamera")]
     [SerializeField] CinemachineCamera vcamMain;
@@ -45,12 +46,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         canPlant = true;
-    }
-
-    [ContextMenu("Get All Plots")]
-    void GetAllPlots()
-    {
-        allPlot = FindObjectsByType<PlotController>(FindObjectsSortMode.None);
     }
 
     public void ReturnToMainCam()
@@ -99,5 +94,12 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
         warningObj.SetActive(false);
         coWaring = null;
+    }
+
+
+    [ContextMenu("Get All Plots")]
+    void GetAllPlots()
+    {
+        allPlot = FindObjectsByType<PlotController>(FindObjectsSortMode.None);
     }
 }

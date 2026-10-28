@@ -28,16 +28,32 @@ public class PlantDataController : MonoBehaviour
 
     [Header("SeedSelect")]
     [SerializeField] GameObject seedSelectPanal;
-    [SerializeField] int[] haveSeedTier = new int[15];
+    [SerializeField] public int[] haveSeedTier = new int[15];
     [SerializeField] Button[] seedListBtn = new Button[15];
     [SerializeField] Image[] seedIconList = new Image[15];
     [SerializeField] GameObject checkPlantSeedPanal;
+    [SerializeField] TMP_Text checkPlantSeedText;
     [SerializeField] Button yesSelectSeedBtn;
     [SerializeField] Button noSelectSeedBtn;
     [Space]
     [SerializeField] int nowSeedTierSelect;
     [Header("AllPlantData")]
     [SerializeField] public PlantData[] allPlantDatas;
+
+#if UNITY_EDITOR
+    [ContextMenu("Get All Plant Datas")]
+    void GetAllPlantDatas()
+    {
+        string[] guids = UnityEditor.AssetDatabase.FindAssets("t:PlantData", new[] { "Assets/DataPlant" });
+        allPlantDatas = new PlantData[guids.Length];
+        for (int i = 0; i < guids.Length; i++)
+        {
+            string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
+            allPlantDatas[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<PlantData>(path);
+        }
+    }
+#endif
+
     void Awake()
     {
         for (int i = 0; i < seedListBtn.Length; i++)
@@ -64,6 +80,20 @@ public class PlantDataController : MonoBehaviour
 
     public void PlantSeed(int _seedIndex)
     {
+        int _pointSeed = 0;
+        switch (haveSeedTier[_seedIndex])
+        {
+            case 1:
+                _pointSeed = 100;
+                break;
+            case 2:
+                _pointSeed = 250;
+                break;
+            case 3:
+                _pointSeed = 500;
+                break;
+        }
+        checkPlantSeedText.text = "Sure Plant Seed\n Tire : " + haveSeedTier[_seedIndex] + "\npoint " + _pointSeed;
         checkPlantSeedPanal.SetActive(true);
         nowSeedTierSelect = haveSeedTier[_seedIndex];
     }
@@ -119,6 +149,8 @@ public class PlantDataController : MonoBehaviour
     // ฟังก์ชันสั่งอัปเดตข้อมูลทั้งหมด
     public void UpdateAllPlantDataText()
     {
+        if (GameManager.Instance.currentPlotSelect == null) return;
+
         UpdateNamePlantTextValue();
         UpdateTierAndStateTextValue();
         UpdateHpTextValue();
@@ -132,12 +164,13 @@ public class PlantDataController : MonoBehaviour
 
     void UpdateNamePlantTextValue()
     {
-        if (!GameManager.Instance.currentPlotSelect.canShowStatus)
+        if (GameManager.Instance.currentPlotSelect == null) return;
+        if (!GameManager.Instance.currentPlotSelect.canShowStatus || GameManager.Instance.currentPlotSelect.plantData == null)
         {
             namePlantText.text = "???";
             return;
         }
-        namePlantText.text = $"{GameManager.Instance.currentPlotSelect.plantData.name}";
+        namePlantText.text = $"{GameManager.Instance.currentPlotSelect.plantData.namePlant}";
     }
     void UpdateTierAndStateTextValue()
     {
@@ -156,7 +189,8 @@ public class PlantDataController : MonoBehaviour
 
     void UpdateDescriptionTextValue()
     {
-        if (!GameManager.Instance.currentPlotSelect.canShowStatus)
+        if (GameManager.Instance.currentPlotSelect == null) return;
+        if (!GameManager.Instance.currentPlotSelect.canShowStatus || GameManager.Instance.currentPlotSelect.plantData == null)
         {
             descriptionText.text = "???";
             return;

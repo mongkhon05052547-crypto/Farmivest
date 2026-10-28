@@ -20,7 +20,7 @@ public class ToolsController : MonoBehaviour
 
     void Awake()
     {
-        lifeWaterBtn.onClick.AddListener(AddExp);
+        lifeWaterBtn.onClick.AddListener(UseLifeWaterAddExp);
         killBugBtn.onClick.AddListener(KillBug);
         antiPoisonBtn.onClick.AddListener(AntiPoison);
         musicBtn.onClick.AddListener(PlayMusic);
@@ -30,15 +30,17 @@ public class ToolsController : MonoBehaviour
     }
 
     // 1. น้ำวิเศษ (เพิ่ม EXP)
-    void AddExp()
+    void UseLifeWaterAddExp()
     {
         if (amountLifeWater == 0)
         {
             GameManager.Instance.WarningTextShow("Not Have LifeWater");
             return;
         }
+        amountLifeWater--;
         GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.LifeWater);
         GameManager.Instance.currentPlotSelect.ModifyExp(35);
+        GameManager.Instance.currentPlotSelect.useLifeWaterEffect.SetTrigger("Use");
     }
 
     public void AddLifeWater(int _input)
