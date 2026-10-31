@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee93dacd86918d549a8148b4e6187445, type: 3}
   m_Name: Plant41
   m_EditorClassIdentifier: Assembly-CSharp::PlantData
-  namePlant: Plant41
+  namePlant: ถั่วลิสงดาวอังคาร
   icon: {fileID: 21300000, guid: 1ef5ed60fff0bfb42815993d536ac99c, type: 3}
-  Description: 
+  Description: ถั่วจากดาวอังคารกินแล้วอาจมีการกลายพันธ์ุเล็กน้อย

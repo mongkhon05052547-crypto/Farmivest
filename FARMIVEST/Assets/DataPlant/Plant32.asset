@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee93dacd86918d549a8148b4e6187445, type: 3}
   m_Name: Plant32
   m_EditorClassIdentifier: Assembly-CSharp::PlantData
-  namePlant: Plant32
+  namePlant: เถางับๆง้ำๆ
   icon: {fileID: 21300000, guid: c938df50f6c984a43b1c1fcc686b2453, type: 3}
-  Description: 
+  Description: เถาวัลย์กินเนื้อที่จะกินทุกสิ่งแม้จะอันตรายแต่มันก็ป้องกันตัวแทบไม่ได้
