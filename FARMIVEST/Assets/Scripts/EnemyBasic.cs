@@ -13,6 +13,9 @@ public class EnemyBasic : MonoBehaviour, IPointerDownHandler
     public int speedMove;
     public float stopDistan;
     public int damage;
+    public float delayDoDamage;
+    public float delayNextDoDamage;
+
     bool isDie;
 
     PlotController target;
@@ -90,8 +93,9 @@ public class EnemyBasic : MonoBehaviour, IPointerDownHandler
     IEnumerator LoopAttack()
     {
         anim.SetTrigger("Attack");
+        yield return new WaitForSeconds(delayDoDamage);
         target.TakeDamage(damage);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(delayNextDoDamage);
         if (target.havePlant == false)
         {
             GetPlotTarget();

@@ -102,4 +102,12 @@ public class GameManager : MonoBehaviour
     {
         allPlot = FindObjectsByType<PlotController>(FindObjectsSortMode.None);
     }
+
+    public void StarterPack()
+    {
+        Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
+        Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
+        Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
+        Instance.toolsCtr.AddLifeWater(3);
+    }
 }

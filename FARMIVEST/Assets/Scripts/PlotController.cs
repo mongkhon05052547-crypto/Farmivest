@@ -1,7 +1,10 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class PlotController : MonoBehaviour, IPointerDownHandler
+public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [SerializeField] public bool havePlant;
     [Header("Plant")]
@@ -19,14 +22,22 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
     [SerializeField] public ImprintQusets[] imprintQusets = new ImprintQusets[3];
     [SerializeField] public bool[] canDoimprintQusets = new bool[3];
     public bool canShowStatus = false;
+    [SerializeField] public int lifeWaterStack;
+
     [Header("Effect")]
     [SerializeField] public Animator useLifeWaterEffect;
+
+    [SerializeField] GameObject progressBarObj;
+    [SerializeField] Image progressBar;
+    [SerializeField] TMP_Text lifeWaterStackText;
+
+    Coroutine progressAddWarterLife;
     void Awake()
     {
         imprintQusets = new ImprintQusets[3];
         canDoimprintQusets = new bool[3];
     }
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerUp(PointerEventData eventData)
     {
         if (!GameManager.Instance.canPlant) return;
         GameManager.Instance.currentPlotSelect = this;
@@ -64,7 +75,41 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
         maxExp = 100 * state * tier;
     }
 
-    public void ModifyExp(int _input)
+    public void AddLifeWaterToPlant()
+    {
+        lifeWaterStack++;
+        lifeWaterStackText.text = lifeWaterStack.ToString();
+        if (progressAddWarterLife == null)
+        {
+            progressAddWarterLife = StartCoroutine(StartProgressAddLifeWaterToPlant());
+        }
+    }
+
+    IEnumerator StartProgressAddLifeWaterToPlant()
+    {
+        progressBarObj.SetActive(true);
+        float _time = 0;
+        while (_time < 30)
+        {
+            _time += Time.deltaTime;
+            progressBar.fillAmount = _time / 30;
+            yield return null;
+        }
+        lifeWaterStack--;
+        lifeWaterStackText.text = lifeWaterStack.ToString();
+        ModifyExp(100);
+        if (lifeWaterStack == 0)
+        {
+            progressBarObj.SetActive(false);
+            progressAddWarterLife = null;
+        }
+        else
+        {
+            StartCoroutine(StartProgressAddLifeWaterToPlant());
+        }
+    }
+
+    void ModifyExp(int _input)
     {
         if (!havePlant) return;
         if (state == 4 && currentExp == maxExp)
@@ -135,9 +180,9 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
                 imprintPoint += 10;
                 imprintPoint = Mathf.Clamp(imprintPoint, 0, 100);
                 if (GameManager.Instance.currentPlotSelect == this)
-        {
-            GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
-        }
+                {
+                    GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
+                }
                 return;
             }
         }
@@ -153,4 +198,17 @@ public class PlotController : MonoBehaviour, IPointerDownHandler
             plantShow.sprite = null;
         }
     }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+
+    }
+
+    // IEnumerator CountDelayHoldHavest()
+    // {
+    //     while()
+    //     {
+
+    //     }
+    // }
 }

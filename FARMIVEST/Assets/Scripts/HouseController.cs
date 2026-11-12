@@ -11,10 +11,10 @@ public class HouseController : MonoBehaviour, IPointerDownHandler
 
     bool canCallToNight = true;
     int countHaveEnemy;
+
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (canCallToNight == false) return;
-        ToNight();
+        
     }
 
     void SpawnMonster()
@@ -31,7 +31,6 @@ public class HouseController : MonoBehaviour, IPointerDownHandler
         if (countHaveEnemy == 0)
         {
             //Change To Day
-            ToNewDay();
         }
     }
 
@@ -39,23 +38,12 @@ public class HouseController : MonoBehaviour, IPointerDownHandler
     {
         canCallToNight = false;
         StartCoroutine(ControlerNightFilter(true));
-        GameManager.Instance.canPlant = false;
-        SpawnMonster();
     }
 
     void ToNewDay()
     {
         canCallToNight = true;
         StartCoroutine(ControlerNightFilter(false));
-        GameManager.Instance.canPlant = true;
-        GameManager.Instance.toolsCtr.AddLifeWater(3);
-        foreach (PlotController _ap in GameManager.Instance.allPlot)
-        {
-            if (_ap.havePlant)
-            {
-                _ap.ModifyExp(10);
-            }
-        }
     }
 
     IEnumerator ControlerNightFilter(bool _isNight)

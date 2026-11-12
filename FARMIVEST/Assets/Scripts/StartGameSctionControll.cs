@@ -47,10 +47,7 @@ public class StartGameSctionControll : MonoBehaviour
     private void OnClickskipCutscenes()
     {
         OffAllPanal();
-        GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
-        GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
-        GameManager.Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
-        GameManager.Instance.toolsCtr.AddLifeWater(3);
+        GameManager.Instance.StarterPack();
     }
 
     void OffAllPanal()
