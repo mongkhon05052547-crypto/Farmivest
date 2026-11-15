@@ -50,6 +50,8 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         imprintQusets = new ImprintQusets[3];
         canDoimprintQusets = new bool[3];
     }
+
+    #region MouseUp
     public void OnPointerUp(PointerEventData eventData)
     {
         if (progressHoldHavest != null)
@@ -86,7 +88,9 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             GameManager.Instance.plantDataCtr.OpenSeedSelectPanalPanal();
         }
     }
+    #endregion
 
+    #region PlantSeed
     public void PlantSeed(int _seedTier)
     {
         havePlant = true;
@@ -102,15 +106,9 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }
         maxlifeWaterStack = _seedTier * 3;
     }
+    #endregion
 
-    void UpdateMaxExp()
-    {
-        maxHp = 100 * tier;
-        currentHp = maxHp;
-        currentExp = 0;
-        maxExp = 100 * tier;
-    }
-
+    #region AddLifeWater
     public void AddLifeWaterToPlant()
     {
         if (countLifeWaterStack == maxlifeWaterStack || state == 4)
@@ -187,7 +185,16 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
         }
     }
-
+    void UpdateMaxExp()
+    {
+        maxHp = 100 * tier;
+        currentHp = maxHp;
+        currentExp = 0;
+        maxExp = 100 * tier;
+    }
+    #endregion
+    
+    #region Imprint
     void RndImprintQusets()
     {
         for (int a = 0; a < canDoimprintQusets.Length; a++)
@@ -225,8 +232,9 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             }
         }
     }
+    #endregion
 
-
+    #region TakeDamage
     public void TakeDamage(int _damage)
     {
         currentHp -= _damage;
@@ -239,7 +247,9 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             currentLifeWaterStack = 0;
         }
     }
+    #endregion
 
+    #region MouseDown
     public void OnPointerDown(PointerEventData eventData)
     {
         if (!havePlant) return;
@@ -277,6 +287,7 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             yield return null;
         }
     }
+    #endregion
 
     public void ResetPlantPosition()
     {

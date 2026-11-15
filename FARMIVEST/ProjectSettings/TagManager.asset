@@ -41,6 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: WorldText
+    uniqueID: 2315122905
+    locked: 0
   - name: Plot
     uniqueID: 1540664147
     locked: 0
