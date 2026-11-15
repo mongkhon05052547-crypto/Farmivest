@@ -106,14 +106,18 @@ public class ToolsController : MonoBehaviour
     {
         if (amountLifeWater == 0)
         {
-            GameManager.Instance.WarningTextShow("Not Have LifeWater");
+            GameManager.Instance.WarningTextShow("ไม่มี ''น้ำแห่งชีวิต'' ");
+            return;
+        }
+        if (!GameManager.Instance.currentPlotSelect.havePlant)
+        {
+            GameManager.Instance.WarningTextShow("ไม่มีพืช");
             return;
         }
         amountLifeWater--;
         UpdateLifeWaterText();
         GameManager.Instance.currentPlotSelect.CheckImprintQusetsCanDo(ImprintQusets.LifeWater);
         GameManager.Instance.currentPlotSelect.AddLifeWaterToPlant();
-        GameManager.Instance.currentPlotSelect.useLifeWaterEffect.SetTrigger("Use");
     }
 
     public void AddLifeWater(int _input)

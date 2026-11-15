@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ImprintQusets
 {
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     public ToolsController toolsCtr;
     public HouseController houseCtr;
     public ShopController shopCtr;
+    public HarvestController harvestCtr;
 
     [Header("CinemachineCamera")]
     [SerializeField] CinemachineCamera vcamMain;
@@ -23,11 +25,16 @@ public class GameManager : MonoBehaviour
     [Header("UiZone")]
     public GameObject mainGamePlayUiPanal;
     [SerializeField] GameObject dataInPlotPanal;
+    [Header("UiConfirmHavest")]
+    public GameObject panalConfirmHavestObj;
+    public Button confirmHavestBtn;
+    public Button notConfirmHavestBtn;
+    public bool confirmHavest;
     [Header("PlotAndSeed")]
     public Sprite[] seedLV123List;
     public Sprite[] plantLV123List;
     public PlotController[] allPlot;
-    [HideInInspector] public PlotController currentPlotSelect;
+    public PlotController currentPlotSelect;
 
     [Header("Warning")]
     Coroutine coWaring;
@@ -46,6 +53,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         canPlant = true;
+        confirmHavestBtn.onClick.AddListener(() => ConfirmHavest(true));
+        notConfirmHavestBtn.onClick.AddListener(() => ConfirmHavest(false));
     }
 
     public void ReturnToMainCam()
@@ -105,9 +114,30 @@ public class GameManager : MonoBehaviour
 
     public void StarterPack()
     {
-        Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
-        Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
-        Instance.plantDataCtr.AddSeed(SeedTier.Tier1);
-        Instance.toolsCtr.AddLifeWater(3);
+        plantDataCtr.AddSeed(SeedTier.Tier1);
+        plantDataCtr.AddSeed(SeedTier.Tier1);
+        plantDataCtr.AddSeed(SeedTier.Tier1);
+        toolsCtr.AddLifeWater(3);
+    }
+
+    void ConfirmHavest(bool _valu)
+    {
+        panalConfirmHavestObj.SetActive(false);
+        if (_valu)
+        {
+            GameObject _plantShow = Instantiate(currentPlotSelect.plantShow.gameObject, currentPlotSelect.plantShow.transform.position,
+            currentPlotSelect.plantShow.transform.localRotation);
+            _plantShow.transform.localScale = new Vector3(1, 1, 1);
+            harvestCtr.AddPointHavest(currentPlotSelect.GetRealPointHavest());
+        }
+        currentPlotSelect.ResetPlantPosition();
+        currentPlotSelect.plantShow.sprite = null;
+        currentPlotSelect.havePlant = false;
+        currentPlotSelect = null;
+    }
+
+    public int GetSeedTierIndex(SeedTier _tier)
+    {
+        return System.Array.IndexOf(System.Enum.GetValues(typeof(SeedTier)), _tier);
     }
 }

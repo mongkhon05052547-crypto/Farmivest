@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public enum SeedTier
 {
-    Tier1 = 0, Tier2 = 1, Tier3 = 2,
+    Tier1 = 100, Tier2 = 250, Tier3 = 500,
 }
 
 public class PlantDataController : MonoBehaviour
@@ -111,13 +111,14 @@ public class PlantDataController : MonoBehaviour
     #region Add And Remove Seed
     public void AddSeed(SeedTier _seedTier)
     {
+        int _seedIndex = GameManager.Instance.GetSeedTierIndex(_seedTier);
         for (int i = 0; i < haveSeedTier.Length; i++)
         {
             if (haveSeedTier[i] == 0)
             {
-                haveSeedTier[i] = (int)_seedTier + 1;
+                haveSeedTier[i] = _seedIndex + 1;
                 seedListBtn[i].gameObject.SetActive(true);
-                seedIconList[i].sprite = GameManager.Instance.seedLV123List[(int)_seedTier];
+                seedIconList[i].sprite = GameManager.Instance.seedLV123List[_seedIndex];
                 return;
             }
         }

@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
@@ -9,7 +10,8 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     [SerializeField] public bool havePlant;
     [Header("Plant")]
     [Space]
-    [SerializeField] SpriteRenderer plantShow;
+    [SerializeField] public SpriteRenderer plantShow;
+    [SerializeField] Collider2D plantShowColl;
     [Header("Stat")]
     [SerializeField] public PlantData plantData;
     [SerializeField] public int tier;
@@ -22,16 +24,27 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     [SerializeField] public ImprintQusets[] imprintQusets = new ImprintQusets[3];
     [SerializeField] public bool[] canDoimprintQusets = new bool[3];
     public bool canShowStatus = false;
-    [SerializeField] public int lifeWaterStack;
+    [SerializeField] public int currentLifeWaterStack;
+    [SerializeField] public int countLifeWaterStack;
+    [SerializeField] public int maxlifeWaterStack;
+    [SerializeField] public float durationPlantReceiveLiftWater;
 
-    [Header("Effect")]
+    [SerializeField] bool onHoldHavest = false;
+    [SerializeField] bool plantOnHavestPoint = false;
+    [Header("Effect LifeWater")]
     [SerializeField] public Animator useLifeWaterEffect;
 
-    [SerializeField] GameObject progressBarObj;
-    [SerializeField] Image progressBar;
+    [Header("Effect LifeWater Bar")]
+    [SerializeField] GameObject progressBarLifeWaterObj;
+    [SerializeField] Image progressBarLifeWater;
     [SerializeField] TMP_Text lifeWaterStackText;
 
+    [Header("Effect Havest Bar")]
+    [SerializeField] GameObject progressBarHavestObj;
+    [SerializeField] Image progressBarHavest;
+
     Coroutine progressAddWarterLife;
+    Coroutine progressHoldHavest;
     void Awake()
     {
         imprintQusets = new ImprintQusets[3];
@@ -39,6 +52,28 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     }
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (progressHoldHavest != null)
+        {
+            StopCoroutine(progressHoldHavest);
+            progressHoldHavest = null;
+            progressBarHavestObj.SetActive(false);
+            plantShowColl.enabled = true;
+            if (plantOnHavestPoint)
+            {
+                GameManager.Instance.panalConfirmHavestObj.SetActive(true);
+            }
+            else
+            {
+                GameManager.Instance.currentPlotSelect = null;
+                ResetPlantPosition();
+            }
+            plantOnHavestPoint = false;
+        }
+        if (onHoldHavest)
+        {
+            onHoldHavest = false;
+            return;
+        }
         if (!GameManager.Instance.canPlant) return;
         GameManager.Instance.currentPlotSelect = this;
         GameManager.Instance.ZoomToPlot(gameObject);
@@ -65,20 +100,29 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         {
             GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
         }
+        maxlifeWaterStack = _seedTier * 3;
     }
 
     void UpdateMaxExp()
     {
-        maxHp = 100 * state * tier;
+        maxHp = 100 * tier;
         currentHp = maxHp;
         currentExp = 0;
-        maxExp = 100 * state * tier;
+        maxExp = 100 * tier;
     }
 
     public void AddLifeWaterToPlant()
     {
-        lifeWaterStack++;
-        lifeWaterStackText.text = lifeWaterStack.ToString();
+        if (countLifeWaterStack == maxlifeWaterStack || state == 4)
+        {
+            GameManager.Instance.WarningTextShow("พืชไม่ต้องการน้ำชีวิตแล้ว");
+            GameManager.Instance.toolsCtr.AddLifeWater(1);
+            return;
+        }
+        GameManager.Instance.currentPlotSelect.useLifeWaterEffect.SetTrigger("Use");
+        currentLifeWaterStack++;
+        lifeWaterStackText.text = currentLifeWaterStack.ToString();
+        countLifeWaterStack++;
         if (progressAddWarterLife == null)
         {
             progressAddWarterLife = StartCoroutine(StartProgressAddLifeWaterToPlant());
@@ -87,39 +131,29 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     IEnumerator StartProgressAddLifeWaterToPlant()
     {
-        progressBarObj.SetActive(true);
-        float _time = 0;
-        while (_time < 30)
+        progressBarLifeWaterObj.SetActive(true);
+        while (currentLifeWaterStack > 0)
         {
-            _time += Time.deltaTime;
-            progressBar.fillAmount = _time / 30;
-            yield return null;
+            float _time = 0;
+            while (_time < durationPlantReceiveLiftWater)
+            {
+                _time += Time.deltaTime;
+                progressBarLifeWater.fillAmount = _time / durationPlantReceiveLiftWater;
+                yield return null;
+            }
+            currentLifeWaterStack--;
+            lifeWaterStackText.text = currentLifeWaterStack.ToString();
+            ModifyExp(100);
         }
-        lifeWaterStack--;
-        lifeWaterStackText.text = lifeWaterStack.ToString();
-        ModifyExp(100);
-        if (lifeWaterStack == 0)
-        {
-            progressBarObj.SetActive(false);
-            progressAddWarterLife = null;
-        }
-        else
-        {
-            StartCoroutine(StartProgressAddLifeWaterToPlant());
-        }
+        currentLifeWaterStack = 0;
+        lifeWaterStackText.text = "0";
+        progressBarLifeWaterObj.SetActive(false);
+        progressAddWarterLife = null;
     }
 
     void ModifyExp(int _input)
     {
         if (!havePlant) return;
-        if (state == 4 && currentExp == maxExp)
-        {
-            if (GameManager.Instance.currentPlotSelect == this)
-            {
-                GameManager.Instance.WarningTextShow("MaxLv : Can Havest");
-            }
-            return;
-        }
         // ToolsController handles amountLifeWater decrement
         currentExp += _input;
         currentExp = Mathf.Clamp(currentExp, 0, maxExp);
@@ -128,11 +162,14 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             GameManager.Instance.plantDataCtr.UpdateAllPlantDataText();
         }
 
-        if (currentExp == maxExp && state != 4)
+        if (currentExp == maxExp)
         {
             state++;
             UpdateMaxExp();
-            RndImprintQusets();
+            if (tier > 1)
+            {
+                RndImprintQusets();
+            }
             if (state < 4)
             {
                 plantShow.sprite = GameManager.Instance.plantLV123List[state - 1];
@@ -141,6 +178,7 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
             {
                 plantShow.sprite = plantData.icon;
                 canShowStatus = true;
+                currentExp = maxExp;
             }
         }
 
@@ -194,21 +232,66 @@ public class PlotController : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         currentHp -= _damage;
         if (currentHp <= 0)
         {
+            StopAllCoroutines();
+            progressBarLifeWaterObj.SetActive(false);
             havePlant = false;
             plantShow.sprite = null;
+            currentLifeWaterStack = 0;
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-
+        if (!havePlant) return;
+        progressHoldHavest = StartCoroutine(CountDelayHoldHavest());
     }
 
-    // IEnumerator CountDelayHoldHavest()
-    // {
-    //     while()
-    //     {
+    IEnumerator CountDelayHoldHavest()
+    {
+        yield return new WaitForSeconds(0.5f);
+        onHoldHavest = true;
+        GameManager.Instance.currentPlotSelect = this;
+        if (state != 4)
+        {
+            GameManager.Instance.WarningTextShow("พืชยังไม่พร้อมเก็บเกียว");
+            yield break;
+        }
+        progressBarHavestObj.SetActive(true);
+        float _time = 0;
+        while (_time < 1f)
+        {
+            _time += Time.deltaTime;
+            progressBarHavest.fillAmount = _time / 1f;
+            yield return null;
+        }
+        progressBarHavestObj.SetActive(false);
 
-    //     }
-    // }
+        while (onHoldHavest)
+        {
+            Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
+            // 2. แปลงเป็นพิกัดในเกมผ่านกล้อง Main Camera
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+            worldPos.z = 0f; // ล็อคแกน Z ไว้ที่ 0 ให้ตรงกับระนาบ 2D
+                             // 3. ย้ายตำแหน่งเมาส์ Sprite
+            plantShow.transform.position = worldPos;
+            yield return null;
+        }
+    }
+
+    public void ResetPlantPosition()
+    {
+        plantShow.transform.localPosition = new Vector3(0, -0.86f, 0);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        plantOnHavestPoint = true;
+    }
+
+    public int GetRealPointHavest()
+    {
+        SeedTier _currentSelect = (SeedTier)System.Enum.GetValues(typeof(SeedTier)).GetValue(tier - 1);
+        float _realPoint = (int)_currentSelect + ((int)_currentSelect * (imprintPoint / 100f));
+        return (int)_realPoint;
+    }
 }
