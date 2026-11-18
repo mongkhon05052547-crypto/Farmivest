@@ -26182,9 +26182,9 @@ MonoBehaviour:
   notConfirmHavestBtn: {fileID: 88716101}
   confirmHavest: 0
   seedLV123List:
-  - {fileID: 21300000, guid: 55481b802fe23f546909b552cd1eb05c, type: 3}
-  - {fileID: 21300000, guid: 14cc01d9c248c884abf3bf3642d7f46c, type: 3}
-  - {fileID: 21300000, guid: 5201c03df08ac754eaebf9e07c480663, type: 3}
+  - {fileID: -7866928900747384746, guid: 052b50ad12028ea4e825a8fbfb8d0c47, type: 3}
+  - {fileID: -7866928900747384746, guid: 052b50ad12028ea4e825a8fbfb8d0c47, type: 3}
+  - {fileID: -7866928900747384746, guid: 052b50ad12028ea4e825a8fbfb8d0c47, type: 3}
   plantLV123List:
   - {fileID: 21300000, guid: e3a4a9e4323f1d340952ae27d5b28cf9, type: 3}
   - {fileID: 21300000, guid: aa03ab3f56050c9459706f9d26f6f3c9, type: 3}
